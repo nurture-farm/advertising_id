@@ -10,6 +10,8 @@ import kotlin.concurrent.thread
 
 class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler {
 
+    val mResult: Result
+
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
@@ -19,16 +21,19 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
+        mResult = result
         when (call.method) {
             "getAdvertisingId" -> thread {
                 try {
                     val id = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).id
                     registrar.activity().runOnUiThread {
-                        result.success(id)
+                        mResult?.success(id)
+                        mResult = null
                     }
                 } catch (e: Exception) {
                     registrar.activity().runOnUiThread {
-                        result.error(e.javaClass.canonicalName, e.localizedMessage, null)
+                        mResult?.error(e.javaClass.canonicalName, e.localizedMessage, null)
+                        mResult = null
                     }
                 }
             }
@@ -36,15 +41,20 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
                 try {
                     val isLimitAdTrackingEnabled = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).isLimitAdTrackingEnabled
                     registrar.activity().runOnUiThread {
-                        result.success(isLimitAdTrackingEnabled)
+                        mResult?.success(isLimitAdTrackingEnabled)
+                        mResult = null
                     }
                 } catch (e: Exception) {
                     registrar.activity().runOnUiThread {
-                        result.error(e.javaClass.canonicalName, e.localizedMessage, null)
+                        mResult?.error(e.javaClass.canonicalName, e.localizedMessage, null)
+                        mResult = null
                     }
                 }
             }
-            else -> result.notImplemented()
+            else -> {
+                mResult?.notImplemented()
+                mResult = null
+            }
         }
     }
 }
