@@ -10,7 +10,7 @@ import kotlin.concurrent.thread
 
 class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler {
 
-    val mResult: Result
+    var mResult: Result
 
     companion object {
         @JvmStatic
@@ -27,13 +27,17 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
                 try {
                     val id = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).id
                     registrar.activity().runOnUiThread {
-                        mResult?.success(id)
-                        mResult = null
+                        if (mResult != null) {
+                            mResult.success(id)
+                            mResult = null
+                        }
                     }
                 } catch (e: Exception) {
                     registrar.activity().runOnUiThread {
-                        mResult?.error(e.javaClass.canonicalName, e.localizedMessage, null)
-                        mResult = null
+                        if (mResult != null) {
+                            mResult.error(e.javaClass.canonicalName, e.localizedMessage, null)
+                            mResult = null
+                        }
                     }
                 }
             }
@@ -41,19 +45,25 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
                 try {
                     val isLimitAdTrackingEnabled = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).isLimitAdTrackingEnabled
                     registrar.activity().runOnUiThread {
-                        mResult?.success(isLimitAdTrackingEnabled)
-                        mResult = null
+                        if (mResult != null) {
+                            mResult.success(isLimitAdTrackingEnabled)
+                            mResult = null
+                        }
                     }
                 } catch (e: Exception) {
                     registrar.activity().runOnUiThread {
-                        mResult?.error(e.javaClass.canonicalName, e.localizedMessage, null)
-                        mResult = null
+                        if (mResult != null) {
+                            mResult.error(e.javaClass.canonicalName, e.localizedMessage, null)
+                            mResult = null
+                        }
                     }
                 }
             }
             else -> {
-                mResult?.notImplemented()
-                mResult = null
+                if (mResult != null) {
+                    mResult.notImplemented()
+                    mResult = null
+                }
             }
         }
     }
