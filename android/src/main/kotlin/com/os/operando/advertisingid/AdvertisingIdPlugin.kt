@@ -10,7 +10,6 @@ import kotlin.concurrent.thread
 
 class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler {
 
-    var mResult: Result? = null
 
     companion object {
         @JvmStatic
@@ -21,22 +20,19 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        mResult = result
         when (call.method) {
             "getAdvertisingId" -> thread {
                 try {
                     val id = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).id
                     registrar.activity().runOnUiThread {
-                        if (mResult != null) {
-                            mResult.success(id)
-                            mResult = null
+                        if (result != null) {
+                            result.success(id)
                         }
                     }
                 } catch (e: Exception) {
                     registrar.activity().runOnUiThread {
-                        if (mResult != null) {
-                            mResult.error(e.javaClass.canonicalName, e.localizedMessage, null)
-                            mResult = null
+                        if (result != null) {
+                            result.error(e.javaClass.canonicalName, e.localizedMessage, null)
                         }
                     }
                 }
@@ -45,24 +41,21 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
                 try {
                     val isLimitAdTrackingEnabled = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).isLimitAdTrackingEnabled
                     registrar.activity().runOnUiThread {
-                        if (mResult != null) {
-                            mResult.success(isLimitAdTrackingEnabled)
-                            mResult = null
+                        if (result != null) {
+                            result.success(isLimitAdTrackingEnabled)
                         }
                     }
                 } catch (e: Exception) {
                     registrar.activity().runOnUiThread {
-                        if (mResult != null) {
-                            mResult.error(e.javaClass.canonicalName, e.localizedMessage, null)
-                            mResult = null
+                        if (result != null) {
+                            result.error(e.javaClass.canonicalName, e.localizedMessage, null)
                         }
                     }
                 }
             }
             else -> {
-                if (mResult != null) {
-                    mResult.notImplemented()
-                    mResult = null
+                if (result != null) {
+                    result.notImplemented()
                 }
             }
         }
