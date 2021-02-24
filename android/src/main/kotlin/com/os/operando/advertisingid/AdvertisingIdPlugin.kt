@@ -10,7 +10,7 @@ import kotlin.concurrent.thread
 
 class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler {
 
-    var mResult: Result
+    var mResult: Result? = null
 
     companion object {
         @JvmStatic
