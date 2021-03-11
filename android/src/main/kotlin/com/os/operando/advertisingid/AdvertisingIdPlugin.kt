@@ -24,19 +24,15 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
             "getAdvertisingId" -> thread {
                 try {
                     val id = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).id
-                    if (registrar.activity() != null) {
-                        registrar.activity().runOnUiThread {
-                            if (result != null) {
-                                result.success(id)
-                            }
+                    registrar.activity().runOnUiThread {
+                        if (result != null) {
+                            result.success(id)
                         }
                     }
                 } catch (e: Exception) {
-                    if (registrar.actitivty() != null) {
-                        registrar.activity().runOnUiThread {
-                            if (result != null) {
-                                result.error(e.javaClass.canonicalName, e.localizedMessage, null)
-                            }
+                    registrar.activity().runOnUiThread {
+                        if (result != null) {
+                            result.error(e.javaClass.canonicalName, e.localizedMessage, null)
                         }
                     }
                 }
@@ -44,19 +40,15 @@ class AdvertisingIdPlugin(private val registrar: Registrar) : MethodCallHandler 
             "isLimitAdTrackingEnabled" -> thread {
                 try {
                     val isLimitAdTrackingEnabled = AdvertisingIdClient.getAdvertisingIdInfo(registrar.context()).isLimitAdTrackingEnabled
-                    if (registrar.activity() != null) {
-                        registrar.activity().runOnUiThread {
-                            if (result != null) {
-                                result.success(isLimitAdTrackingEnabled)
-                            }
+                    registrar.activity().runOnUiThread {
+                        if (result != null) {
+                            result.success(isLimitAdTrackingEnabled)
                         }
                     }
                 } catch (e: Exception) {
-                    if (registrar.activity() != null) {
-                        registrar.activity().runOnUiThread {
-                            if (result != null) {
-                                result.error(e.javaClass.canonicalName, e.localizedMessage, null)
-                            }
+                    registrar.activity().runOnUiThread {
+                        if (result != null) {
+                            result.error(e.javaClass.canonicalName, e.localizedMessage, null)
                         }
                     }
                 }
